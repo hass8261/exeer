@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="エクシール株式会社へのお問い合わせフォーム。">
+    <title>お問い合わせ | Exeer Co. Ltd.</title>
+    <link rel="icon" href="/assets/exeer.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="主要ナビゲーション">
+        <a class="brand" href="/" aria-label="Exeer トップページ">
+          <img src="/assets/exeer.svg" alt="">
+          <span class="brand-name">EXEER <span class="brand-sub">エクシール株式会社</span></span>
+        </a>
+        <div class="nav-links">
+          <a href="/">トップ</a>
+          <a href="/services">サービス</a>
+          <a href="/company">会社概要</a>
+          <a class="nav-contact" href="/contact" aria-current="page">お問い合わせ</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main">
+      <section class="section" aria-labelledby="contact-title">
+        <div class="section-header">
+          <p class="eyebrow">Contact</p>
+          <h1 class="section-title" id="contact-title">お問い合わせ</h1>
+          <p class="section-lede">
+            事業、取材、お取引、その他エクシール株式会社へのお問い合わせは、下記フォームよりご連絡ください。
+            内容を確認のうえ、担当者よりご返信いたします。
+          </p>
+        </div>
+
+        <form class="form-panel" data-contact-form>
+          <div class="field-grid">
+            <label class="field">
+              <span>お名前 *</span>
+              <input name="name" autocomplete="name" required>
+            </label>
+            <label class="field">
+              <span>会社名</span>
+              <input name="company" autocomplete="organization">
+            </label>
+            <label class="field">
+              <span>メールアドレス *</span>
+              <input name="email" type="email" autocomplete="email" required>
+            </label>
+            <label class="field">
+              <span>電話番号</span>
+              <input name="phone" autocomplete="tel">
+            </label>
+            <label class="field full">
+              <span>お問い合わせ内容 *</span>
+              <textarea name="message" required></textarea>
+            </label>
+            <label class="hidden-field">
+              <span>Website</span>
+              <input name="website" tabindex="-1" autocomplete="off">
+            </label>
+          </div>
+          <div class="section-actions">
+            <button class="button" type="submit">送信する</button>
+            <p class="form-status" data-form-status aria-live="polite">
+              フォームが利用できない場合は management@exeer.com まで直接ご連絡ください。
+            </p>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© Exeer Co. Ltd.</span>
+        <div class="footer-links">
+          <a href="/services">サービス</a>
+          <a href="/company">会社概要</a>
+          <a href="/contact">お問い合わせ</a>
+        </div>
+      </div>
+    </footer>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
