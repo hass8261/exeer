@@ -1,12 +1,29 @@
 import { createServer } from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
 import { readFile } from "node:fs/promises";
+import nodemailer from "nodemailer";
 
 const PORT = Number.parseInt(process.env.PORT || "8080", 10);
 const PUBLIC_DIR = resolve("public");
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "management@exeer.com";
-const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || "Exeer Website <onboarding@resend.dev>";
-const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const CONTACT_FROM_EMAIL =
+  process.env.CONTACT_FROM_EMAIL || "Exeer Website <management@exeer.com>";
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number.parseInt(process.env.SMTP_PORT || "587", 10);
+const SMTP_USER = process.env.SMTP_USER || "management@exeer.com";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+
+const mailTransport =
+  SMTP_PASS &&
+  nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS
+    }
+  });
 
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
@@ -103,8 +120,8 @@ async function handleContact(req, res) {
     return;
   }
 
-  if (!RESEND_API_KEY) {
-    console.error("[contact] RESEND_API_KEY is not configured");
+  if (!mailTransport) {
+    console.error("[contact] SMTP_PASS is not configured");
     sendJson(res, 503, {
       ok: false,
       message: "現在フォームを送信できません。management@exeer.com まで直接ご連絡ください。"
@@ -113,6 +130,17 @@ async function handleContact(req, res) {
   }
 
   const submittedAt = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+  const text = [
+    "Exeer Webサイトからのお問い合わせ",
+    "",
+    `送信日時: ${submittedAt}`,
+    `お名前: ${name}`,
+    `会社名: ${company || "-"}`,
+    `メール: ${email}`,
+    `電話番号: ${phone || "-"}`,
+    "",
+    message
+  ].join("\n");
   const html = `
     <h1>Exeer Webサイトからのお問い合わせ</h1>
     <p><strong>送信日時:</strong> ${escapeHtml(submittedAt)}</p>
@@ -124,24 +152,17 @@ async function handleContact(req, res) {
     <p>${escapeHtml(message).replaceAll("\n", "<br>")}</p>
   `;
 
-  const resendResponse = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
+  try {
+    await mailTransport.sendMail({
       from: CONTACT_FROM_EMAIL,
-      to: [CONTACT_TO_EMAIL],
-      reply_to: email,
+      to: CONTACT_TO_EMAIL,
+      replyTo: email,
       subject: `Exeer Webサイトお問い合わせ: ${name}`,
+      text,
       html
-    })
-  });
-
-  if (!resendResponse.ok) {
-    const errorText = await resendResponse.text().catch(() => "");
-    console.error("[contact] Resend API error", resendResponse.status, errorText);
+    });
+  } catch (error) {
+    console.error("[contact] SMTP send failed", error);
     sendJson(res, 502, {
       ok: false,
       message: "送信に失敗しました。時間をおいて再度お試しください。"
