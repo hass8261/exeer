@@ -128,11 +128,9 @@ img {
 }
 
 .hero {
-  align-items: center;
-  display: grid;
-  gap: 48px;
-  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
-  min-height: 620px;
+  max-width: 760px;
+  min-height: 480px;
+  padding-top: 24px;
 }
 
 .eyebrow {
