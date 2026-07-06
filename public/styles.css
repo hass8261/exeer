@@ -158,6 +158,13 @@ h1 {
   margin-bottom: 24px;
 }
 
+.hero-legal {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin: 0 0 8px;
+}
+
 .hero-copy {
   color: var(--muted);
   font-size: clamp(1.05rem, 1.8vw, 1.24rem);
